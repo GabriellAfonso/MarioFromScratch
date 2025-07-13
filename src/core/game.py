@@ -13,7 +13,7 @@ class Game:
         self.running = True
 
         self.scene_manager = SceneManager()
-        self.scene_manager.go_to(GameScene(self))  # Inicia com a cena do jogo
+        self.scene_manager.go_to(GameScene(self, self.screen))  # Inicia com a cena do jogo
 
     def run(self):
         while self.running:

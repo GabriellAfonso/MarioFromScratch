@@ -1,9 +1,11 @@
 from abc import ABC, abstractmethod
 
 
+
 class BaseScene(ABC):
-    def __init__(self, game):
+    def __init__(self, game, screen):
         self.game = game
+        self.screen = screen
 
     @abstractmethod
     def handle_events(self, event):
