@@ -1,28 +1,83 @@
+import pygame
 from abc import ABC, abstractmethod
-
+from src.core.settings import ASSETS
+from src.objects.images import ImageObject
 
 
 class BaseScene(ABC):
-    def __init__(self, game, screen):
+    def __init__(self, game):
+        self.name = None
         self.game = game
-        self.screen = screen
+        self.screen = game.screen
+        self.insertion_index = 0
+        self.render_list = []
+        self.preload()
+        self.create()
+
+    def preload(self):
+        pass
+
+    def handle_events(self, event):
+        pass
 
     @abstractmethod
-    def handle_events(self, event):
+    def create(self):
         pass
 
     @abstractmethod
     def update(self):
         pass
 
-    @abstractmethod
-    def render(self, screen):
+    def render(self):
+        print(self.name, self.render_list)
+
+        self.render_list.sort(key=lambda obj: (obj.depth, obj.scene_index))
+        for obj in self.render_list:
+            self.screen.blit(obj.surface, (obj.x, obj.y))
         pass
+
+    def load_image(self, key, path):
+        surface = pygame.image.load(path).convert()
+        ASSETS[key] = surface
+
+    def add_image(self, key, x, y):
+        surface = ASSETS[key]
+        image = ImageObject(surface, x, y)
+        self.insertion_index += 1
+        image.scene_index = self.insertion_index
+        self.render_list.append(image)
+        print(self.render_list)
+        self.render()
+        return image
 
 
 class SceneManager:
-    def __init__(self):
-        self.scene = None
+    def __init__(self, game):
+        self.game = game
+        self.scenes = {}  # Registro: key -> classe
+        self.active_scenes = []
+        self.next_scene = None
 
-    def go_to(self, scene):
-        self.scene = scene
+    def register(self, key, scene_cls):
+        self.scenes[key] = scene_cls
+
+    def start(self, key):
+        # Troca a cena atual por uma nova
+        self.active_scenes = [self.scenes[key](self.game)]
+        if self.next_scene:
+            self.active_scenes = [self.scenes[self.next_scene](self.game)]
+
+    def run(self, key):
+        # Adiciona nova cena ao topo (como overlay)
+        scene = self.scenes[key](self.game)
+        self.active_scenes.append(scene)
+
+    def stop(self, key):
+        self.active_scenes = [
+            s for s in self.active_scenes if s.__class__.__name__ != key
+        ]
+
+    def current(self):
+        if self.active_scenes:
+            return self.active_scenes[-1]
+        return None
