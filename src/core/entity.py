@@ -1,5 +1,6 @@
 import pygame
 
+
 class Entity(pygame.sprite.Sprite):
     def __init__(self, x, y, image):
         super().__init__()
@@ -14,7 +15,7 @@ class Entity(pygame.sprite.Sprite):
 
     def update(self):
         keys = pygame.key.get_pressed()
-        
+
         if keys[pygame.K_a]:
             self.rect.x -= 5
             if not self.facing_right:
@@ -27,6 +28,11 @@ class Entity(pygame.sprite.Sprite):
                 self.image = pygame.transform.flip(self.image, True, False)
                 self.facing_right = False
 
+        if keys[pygame.K_s]:
+            self.rect.y += 5
+
+        if keys[pygame.K_w]:
+            self.rect.y -= 5
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
