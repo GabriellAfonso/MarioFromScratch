@@ -1,4 +1,5 @@
 from src.core.scenes import BaseScene
+from src.core.entity import Entity
 
 
 class TesteScene(BaseScene):
@@ -8,13 +9,17 @@ class TesteScene(BaseScene):
 
     def create(self):
         print('TesteScene created')
-        self.add_image('yoshis_island2', 0, 0)
-        # self.game.scene_manager.stop('loading')
+        self.map = self.add_image('yoshis_island2', 0, 80)
+        self.mario = self.add_image('mario_idle', 0, 0)
+        self.map.set_scale(1.5)
+        self.mario.set_scale(2.5)
+
+        self.music = self.add_audio('overworld_theme')
+        self.music.play(-1)
 
     def handle_events(self, event):
-        # implementação concreta
         pass
 
     def update(self):
-        # implementação concreta
+
         pass

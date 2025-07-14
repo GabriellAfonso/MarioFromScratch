@@ -18,6 +18,8 @@ class LoadingScene(BaseScene):
         self.load_image('mario_duck', f'{self.characters_path}mario/duck.png')
         self.load_image('mario_look_up',
                         f'{self.characters_path}mario/look_up.png')
+        self.load_audio('overworld_theme',
+                        'assets/musics/overworld_theme.ogg')
 
     def create(self):
         print('LoadingScene created')

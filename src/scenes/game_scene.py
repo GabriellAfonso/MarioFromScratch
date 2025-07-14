@@ -26,6 +26,9 @@ class GameScene(BaseScene):
         # implementação concreta
         pass
 
+    def create(self):
+        pass
+
     def update(self):
         self.char.update()
 
