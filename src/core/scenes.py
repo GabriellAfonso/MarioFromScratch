@@ -29,19 +29,30 @@ class BaseScene(ABC):
         pass
 
     def render(self):
-        print(self.name, self.render_list)
+        # print(self.name, self.render_list)
 
         self.render_list.sort(key=lambda obj: (obj.depth, obj.scene_index))
         for obj in self.render_list:
+            if obj.rect:
+                self.screen.blit(obj.surface, obj.rect)
+                continue
             self.screen.blit(obj.surface, (obj.x, obj.y))
         pass
 
+    def load_audio(self, key, path):
+        sound = pygame.mixer.Sound(path)
+        ASSETS['audio'][key] = sound
+
+    def add_audio(self, key):
+        sound = ASSETS['audio'][key]
+        return sound
+
     def load_image(self, key, path):
         surface = pygame.image.load(path).convert()
-        ASSETS[key] = surface
+        ASSETS['images'][key] = surface
 
     def add_image(self, key, x, y):
-        surface = ASSETS[key]
+        surface = ASSETS['images'][key]
         image = ImageObject(surface, x, y)
         self.insertion_index += 1
         image.scene_index = self.insertion_index
