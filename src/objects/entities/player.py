@@ -8,51 +8,93 @@ class Player(pygame.sprite.Sprite):
         self.sprite = scene.add_image('mario_idle', x, y)
         self.rect = self.sprite.set_rect()
         self.vx = 5
-        self.facing_right = True
+        self.direction_facing = 'left'
         self.sprite.set_scale(3)
         self.original_image = self.sprite.texture
         self.sprite.chroma_key(0, 116, 116)
         self.state = 'idle'
         self.move_disable = False
 
-    def move(self):
 
+
+    def char_command(self):
         keys = pygame.key.get_pressed()
-        
-        if keys[pygame.K_w] and not self.state == 'looking_up':
-            self.state = 'looking_up'
-            self.move_disable = True
-            self.sprite.set_texture('mario_look_up')
-            print('apertei')
-        elif self.state == 'looking_up' and not keys[pygame.K_w]:
-            self.state = 'idle'
+
+        try_look_up = keys[pygame.K_w]
+        try_duck    = keys[pygame.K_s]
+        try_walk      = keys[pygame.K_a] or keys[pygame.K_d]
+
+        # 🧍‍♂️ Sai do estado de olhar pra cima se soltou W
+        if self.state == 'looking_up' and not try_look_up:
             self.move_disable = False
-            self.sprite.set_texture('mario_idle')
-        
-        if keys[pygame.K_a] and not self.move_disable:
-            self.sprite.rect.x -= self.vx
-            self.sprite.x -= self.vx
-            if not self.facing_right:
-                self.sprite.texture = self.original_image
-                self.facing_right = True
+            if try_walk:
+                self.state = 'walking'
+            else:
+                self.state = 'idle'
 
+        # 🧎 Sai do estado de agachado se soltou S
+        elif self.state == 'ducked' and not try_duck:
+            self.move_disable = False
+            if try_walk:
+                self.state = 'walking'
+            else:
+                self.state = 'idle'
 
-        if keys[pygame.K_d] and not self.move_disable:
-            self.sprite.rect.x += self.vx
-            self.sprite.x += self.vx
-            if self.facing_right:
-                self.sprite.texture = pygame.transform.flip(self.sprite.texture, True, False)
-                self.facing_right = False
-
-
-        if keys[pygame.K_s]:
-            self.sprite.set_texture('mario_duck')
+        # 🧎‍♂️ Agachar tem prioridade
+        elif try_duck:
             self.state = 'ducked'
             self.move_disable = True
-        elif self.state == 'ducked':
+
+        # 👆 Olhar cima vem depois
+        elif try_look_up:
+            self.state = 'looking_up'
+            self.move_disable = True
+
+        # 🚶 Andar, só se não estiver travado
+        elif try_walk and not self.move_disable:
+            self.state = 'walking'
+
+        # 💤 Ninguém tá fazendo nada
+        else:
             self.state = 'idle'
             self.move_disable = False
-            self.sprite.set_texture('mario_idle')            
+
+    def char_states(self):
+
+        keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_a]:
+                self.direction_facing = 'left'
+        if keys[pygame.K_d]:
+                self.direction_facing = 'right'
+
+
+        if self.state == 'idle':
+             self.sprite.set_texture('mario_idle')
+
+        elif self.state == 'looking_up':
+            self.sprite.set_texture('mario_look_up')
+            
+        elif self.state == 'walking':
+            self.sprite.set_texture('mario_walking')
+            if keys[pygame.K_a]:
+
+                    self.sprite.rect.x -= self.vx
+                    self.sprite.x -= self.vx
+            if keys[pygame.K_d]:
+
+                    self.sprite.rect.x += self.vx
+                    self.sprite.x += self.vx
+        
+        elif self.state == 'ducked':
+            self.sprite.set_texture('mario_duck')
+
+        if self.direction_facing == 'right':
+            self.sprite.texture = pygame.transform.flip(self.sprite.texture, True, False)
+        elif self.direction_facing == 'left':
+            self.sprite.texture = pygame.transform.flip(self.sprite.texture, True, False)
+            self.sprite.texture = pygame.transform.flip(self.sprite.texture, True, False)
+
 
 
     def update(self):
@@ -64,7 +106,8 @@ class Player(pygame.sprite.Sprite):
         else:
             self.scene.speed_y = 0
 
-        self.move()  
+        self.char_command()  
+        self.char_states()
        
         # self.draw(self.scene.screen)
         
