@@ -1,38 +1,37 @@
 import pygame
 from ..core.scenes import BaseScene
-from ..core.entity import Entity
 from ..core.settings import BASE_DIR
+from src.objects.entities.player import Player
 import os
 
 
 class GameScene(BaseScene):
     def __init__(self, game):
-        print('AAAAAAQUI', os.getcwd())
+        self.mario = None
         super().__init__(game)
-        self.font = pygame.font.SysFont(None, 48)
-        personagem_img = pygame.image.load(
-            'assets/sprites/characters/mario/idle.png').convert()
-
-        original_size = personagem_img.get_size()
-
-        scale_factor = 4
-        new_size = (int(original_size[0] * scale_factor),
-                    int(original_size[1] * scale_factor))
-        scaled_image = pygame.transform.scale(personagem_img, new_size)
-
-        self.char = Entity(250, 400, scaled_image)
+        self.mario = Player(0, 0, self)
 
     def handle_events(self, event):
         # implementação concreta
         pass
 
     def create(self):
-        pass
+        self.gravity = 1.1
+        self.speed_y = 0
+        self.max_speed_y = 10
+        self.square = pygame.Rect(0, 640, 1080, 5)
 
-    def update(self):
-        self.char.update()
+
+        self.map = self.add_image('yoshis_island2', 0, -512)
+        self.map.set_scale(3)
+
+        self.music = self.add_audio('overworld_theme')
+        self.music.play(-1)
 
     def render(self):
-        self.screen.fill((0, 0, 0))
+        super().render()
 
-        self.char.draw(self.screen)
+    def update(self):
+
+        if self.mario:
+            self.mario.update()

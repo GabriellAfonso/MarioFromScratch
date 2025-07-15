@@ -34,9 +34,9 @@ class BaseScene(ABC):
         self.render_list.sort(key=lambda obj: (obj.depth, obj.scene_index))
         for obj in self.render_list:
             if obj.rect:
-                self.screen.blit(obj.surface, obj.rect)
+                self.screen.blit(obj.texture, obj.rect)
                 continue
-            self.screen.blit(obj.surface, (obj.x, obj.y))
+            self.screen.blit(obj.texture, (obj.x, obj.y))
         pass
 
     def load_audio(self, key, path):
@@ -52,6 +52,7 @@ class BaseScene(ABC):
         ASSETS['images'][key] = surface
 
     def add_image(self, key, x, y):
+        
         surface = ASSETS['images'][key]
         image = ImageObject(surface, x, y)
         self.insertion_index += 1

@@ -1,5 +1,5 @@
 from src.core.scenes import BaseScene
-from src.core.entity import Entity
+from src.objects.entities.player import Player
 
 
 class TesteScene(BaseScene):
