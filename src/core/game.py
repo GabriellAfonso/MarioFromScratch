@@ -3,6 +3,7 @@ from src.core.scene_manager import SceneManager
 from src.scenes.game_scene import GameScene
 from src.scenes.teste_scene import TesteScene
 from src.scenes.loading import LoadingScene
+from src.core.asset_manager import AssetManager
 import os
 from pygame._sdl2 import Window
 
@@ -14,8 +15,9 @@ class Game:
         pygame.display.set_caption("Mario From Scratch")
         self.width = width
         self.height = height
+        self.assets = AssetManager()
         self.screen = pygame.display.set_mode(
-            (width, height), pygame.SCALED | pygame.RESIZABLE)
+            (width, height), pygame.SRCALPHA | pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.SCALED | pygame.RESIZABLE)
 
         self.clock = pygame.time.Clock()
         self.fps = fps
