@@ -27,7 +27,7 @@ class GameScene(BaseScene):
         self.map = self.add_image('yoshis_island2', 0, -512)
         self.map.set_scale(3)
 
-        self.music = self.add_audio('overworld_theme')
+        self.music = self.add_sound('overworld_theme')
         self.music.play(-1)
 
     def render(self):
