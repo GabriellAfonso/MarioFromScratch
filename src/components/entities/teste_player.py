@@ -8,13 +8,14 @@ class TestePlayer():
         self._y = y
         self.scene = scene
         self.sprite = scene.add_image('mario_idle', x, y, 'midbottom')
-        self.hitbox = Collider(x, y, self.sprite.width,
-                               self.sprite.height, anchor='midbottom')
+
         self.vel_x = 5
-        self.vel_y = 50
+        self.vel_y = 5
         self.gravity = 100
         self.direction_facing = 'left'
         self.sprite.set_scale(3)
+        self.hitbox = Collider(x, y, self.sprite.width,
+                               self.sprite.height, anchor='midbottom')
         self.original_image = self.sprite.texture
         self.sprite.chroma_key(0, 116, 116)
         self.state = 'idle'
@@ -33,13 +34,13 @@ class TestePlayer():
     def x(self, value):
         self._x = value
         self.sprite.x = value
-        self.hitbox.area.x = value
+        self.hitbox.x = value
 
     @y.setter
     def y(self, value):
         self._y = value
         self.sprite.y = value
-        self.hitbox.area.y = value
+        self.hitbox.y = value
 
     def char_command(self):
         keys = pygame.key.get_pressed()
@@ -101,41 +102,46 @@ class TestePlayer():
         elif self.state == 'walking':
             self.sprite.set_texture('mario_walking')
             if keys[pygame.K_a]:
-
                 self.x -= self.vel_x
-                self.scene.main_camera.scroll_x -= self.vel_x
             if keys[pygame.K_d]:
-
                 self.x += self.vel_x
-                self.scene.main_camera.scroll_x += self.vel_x
 
         elif self.state == 'ducked':
             self.sprite.set_texture('mario_duck')
+
+        if keys[pygame.K_LEFT]:
+            self.scene.main_camera.scroll_x -= self.vel_x
+        if keys[pygame.K_RIGHT]:
+            self.scene.main_camera.scroll_x += self.vel_x
 
         if self.direction_facing == 'right':
             self.sprite.texture = pygame.transform.flip(
                 self.sprite.texture, True, False)
         elif self.direction_facing == 'left':
             self.sprite.texture = pygame.transform.flip(
-                self.sprite.texture, True, False)
-            self.sprite.texture = pygame.transform.flip(
-                self.sprite.texture, True, False)
+                self.sprite.texture, False, False)
+
+        if keys[pygame.K_w]:
+            self.y -= self.vel_y
+        if keys[pygame.K_s]:
+            self.y += self.vel_y
 
     def update(self):
 
-        if not self.check_collision(self.scene.square):
-            # Considera que self.sprite.y representa a base (pés)
-            if self.sprite.y < self.scene.square.y:
-                diff = self.scene.square.y - self.sprite.y
-                v = min(self.vel_y, diff)
-                self.sprite.y += v
-                self.hitbox.area.bottom = round(self.sprite.y)
+        # if not self.check_collision(self.scene.square.area):
+        #     # Considera que self.sprite.y representa a base (pés)
+        #     if self.sprite.y < self.scene.square.area.y:
+        #         diff = self.scene.square.area.y - self.sprite.y
+        #         v = min(self.vel_y, diff)
+        #         self.sprite.y += v
+        #         self.hitbox.area.bottom = round(self.sprite.y)
 
         self.char_command()
         self.char_states()
-        self.hitbox.draw_debug(self.scene.screen)
+        # self.terrain_collisions()
 
-        # self.draw(self.scene.screen)
+    def terrain_collisions(self):
+        pass
 
     def check_collision(self, rect):
         return self.hitbox.area.colliderect(rect)
