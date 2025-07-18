@@ -1,6 +1,6 @@
 import pygame
 from abc import ABC, abstractmethod
-from src.core.settings import ASSETS
+from src.core.asset_manager import AssetManager
 from src.components.images import ImageObject
 from src.components.camera import Camera
 
@@ -10,9 +10,11 @@ class BaseScene(ABC):
         self.name = None
         self.game = game
         self.main_camera = Camera(self.game.width, self.game.height)
+        self.assets = game.assets
         self.screen = game.screen
         self.insertion_index = 0
         self.render_list = []
+        self.terrains = []
         self.preload()
         self.create()
 
@@ -31,46 +33,34 @@ class BaseScene(ABC):
         pass
 
     def render(self):
+
         self.render_list.sort(key=lambda obj: (obj.depth, obj.scene_index))
         for obj in self.render_list:
             draw_x = obj.x - self.main_camera.offset.x
             draw_y = obj.y - self.main_camera.offset.y
-
             if obj.rect:
-                # print(obj.rect.x, draw_x)
                 draw_rect = obj.rect.copy()
-
                 setattr(draw_rect, obj.anchor, (draw_x, draw_y))
-                # draw_rect.topleft = ((draw_x), draw_y)
+
                 self.screen.blit(obj.texture, draw_rect)
-                # pygame.draw.rect(self.screen, (255, 0, 0), draw_rect,)
-                # print('object tem rect')
-            else:
-                print(f"Object {obj} has no rect defined.")
-                # print(f"Object {obj} has no rect defined.")
-                self.screen.blit(obj.texture, (draw_x, draw_y))
 
-    def load_audio(self, key, path):
-        sound = pygame.mixer.Sound(path)
-        ASSETS['audio'][key] = sound
+                # ver rect das imagens criadas
+                pygame.draw.rect(self.screen, (250, 0, 0),
+                                 draw_rect, width=1)
+            # ver rect dos terrenos
+        for terrain in self.terrains:
+            pygame.draw.rect(self.screen, (0, 0, 250), terrain.area, width=1)
 
-    def add_audio(self, key):
-        sound = ASSETS['audio'][key]
+    def add_sound(self, key):
+        sound = self.assets.get_sound(key)
         return sound
 
-    def load_image(self, key, path):
-        surface = pygame.image.load(path).convert()
-        ASSETS['images'][key] = surface
-
     def add_image(self, key, x, y, anchor='topleft'):
-        print(key)
-        surface = ASSETS['images'][key]
-        image = ImageObject(surface, x, y, anchor)
+        surface = self.assets.get_image(key)
+        image = ImageObject(self, surface, x, y, anchor)
         self.insertion_index += 1
         image.scene_index = self.insertion_index
         self.render_list.append(image)
-        # print(self.render_list)
-        # self.render()
         self.main_camera.add_object(image)
         return image
 
