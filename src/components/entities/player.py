@@ -7,7 +7,9 @@ class Player(pygame.sprite.Sprite):
         self.scene = scene
         self.sprite = scene.add_image('mario_idle', x, y)
         self.rect = self.sprite.set_rect()
-        self.vx = 5
+        self.vel_x = 5
+        self.vel_y = 50
+        self.gravity = 100
         self.direction_facing = 'left'
         self.sprite.set_scale(3)
         self.original_image = self.sprite.texture
@@ -15,14 +17,12 @@ class Player(pygame.sprite.Sprite):
         self.state = 'idle'
         self.move_disable = False
 
-
-
     def char_command(self):
         keys = pygame.key.get_pressed()
 
         try_look_up = keys[pygame.K_w]
-        try_duck    = keys[pygame.K_s]
-        try_walk      = keys[pygame.K_a] or keys[pygame.K_d]
+        try_duck = keys[pygame.K_s]
+        try_walk = keys[pygame.K_a] or keys[pygame.K_d]
 
         # 🧍‍♂️ Sai do estado de olhar pra cima se soltou W
         if self.state == 'looking_up' and not try_look_up:
@@ -64,56 +64,59 @@ class Player(pygame.sprite.Sprite):
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_a]:
-                self.direction_facing = 'left'
+            self.direction_facing = 'left'
         if keys[pygame.K_d]:
-                self.direction_facing = 'right'
-
+            self.direction_facing = 'right'
 
         if self.state == 'idle':
-             self.sprite.set_texture('mario_idle')
+            self.sprite.set_texture('mario_idle')
 
         elif self.state == 'looking_up':
             self.sprite.set_texture('mario_look_up')
-            
+
         elif self.state == 'walking':
             self.sprite.set_texture('mario_walking')
             if keys[pygame.K_a]:
 
-                    self.sprite.rect.x -= self.vx
-                    self.sprite.x -= self.vx
+                self.sprite.rect.x -= self.vel_x
+                self.sprite.x -= self.vel_x
+                self.scene.main_camera.scroll_x -= self.vel_x
             if keys[pygame.K_d]:
 
-                    self.sprite.rect.x += self.vx
-                    self.sprite.x += self.vx
-        
+                self.sprite.rect.x += self.vel_x
+                self.sprite.x += self.vel_x
+                self.scene.main_camera.scroll_x += self.vel_x
+
         elif self.state == 'ducked':
             self.sprite.set_texture('mario_duck')
 
         if self.direction_facing == 'right':
-            self.sprite.texture = pygame.transform.flip(self.sprite.texture, True, False)
+            self.sprite.texture = pygame.transform.flip(
+                self.sprite.texture, True, False)
         elif self.direction_facing == 'left':
-            self.sprite.texture = pygame.transform.flip(self.sprite.texture, True, False)
-            self.sprite.texture = pygame.transform.flip(self.sprite.texture, True, False)
-
-
+            self.sprite.texture = pygame.transform.flip(
+                self.sprite.texture, True, False)
+            self.sprite.texture = pygame.transform.flip(
+                self.sprite.texture, True, False)
 
     def update(self):
 
         if not self.check_collision(self.scene.square):
-            self.scene.speed_y = min(self.scene.speed_y + self.scene.gravity, self.scene.max_speed_y)
-            self.sprite.rect.y += self.scene.speed_y
-            self.sprite.y += self.scene.speed_y
-        else:
-            self.scene.speed_y = 0
+            # Considera que self.sprite.y representa a base (pés)
+            if self.sprite.y < self.scene.square.y:
+                diff = self.scene.square.y - self.sprite.y
+                v = min(self.vel_y, diff)
+                self.sprite.y += v
+                self.sprite.rect.bottom = round(self.sprite.y)
 
-        self.char_command()  
+        self.char_command()
         self.char_states()
-       
+
         # self.draw(self.scene.screen)
-        
+
     def draw(self, screen):
-        screen.blit(self.sprite.texture, (self.sprite.rect.x, self.sprite.rect.y))
+        screen.blit(self.sprite.texture,
+                    (self.sprite.rect.x, self.sprite.rect.y))
 
     def check_collision(self, rect):
         return self.sprite.rect.colliderect(rect)
-    

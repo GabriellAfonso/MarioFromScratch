@@ -1,5 +1,5 @@
 import pygame
-from src.core.scenes import SceneManager, BaseScene
+from src.core.scene_manager import SceneManager
 from src.scenes.game_scene import GameScene
 from src.scenes.teste_scene import TesteScene
 from src.scenes.loading import LoadingScene
