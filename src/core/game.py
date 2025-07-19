@@ -32,6 +32,7 @@ class Game:
     def run(self):
         while self.running:
             self.clock.tick(self.fps)
+            self.delta_time = self.clock.get_time() / 1000.0
             scenes = self.scene_manager.active_scenes
 
             for event in pygame.event.get():
