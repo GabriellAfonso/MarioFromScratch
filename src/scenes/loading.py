@@ -28,7 +28,7 @@ class LoadingScene(BaseScene):
     def create(self):
         print('LoadingScene created')
         # self.game.scene_manager.next_scene = 'teste_scene'
-        self.game.scene_manager.run('game_scene')
+        self.game.scene_manager.run('teste_scene')
         pass
 
     def update(self):
