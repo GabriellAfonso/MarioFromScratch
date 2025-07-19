@@ -4,6 +4,7 @@ from ..core.settings import BASE_DIR
 from src.components.entities.player import Player
 import os
 from src.components.camera import Camera
+from src.components.collider import Collider 
 
 
 class GameScene(BaseScene):
@@ -21,9 +22,12 @@ class GameScene(BaseScene):
         self.gravity = 1.1
         self.speed_y = 0
         self.max_speed_y = 10
-        self.square = pygame.Rect(0, 640, 200, 5)
-        print(self.square.topleft)
-        self.main_camera.add_object(self.square)
+        
+        self.terrain = Collider(0, 640, 1080, 200, 'topleft')
+        self.terrains.append(self.terrain)
+
+
+
         self.map = self.add_image('yoshis_island2', 0, -512)
         self.map.set_scale(3)
 
@@ -32,7 +36,7 @@ class GameScene(BaseScene):
 
     def render(self):
         super().render()
-        pygame.draw.rect(self.screen, (255, 0, 0), self.square)
+ 
 
     def update(self):
 

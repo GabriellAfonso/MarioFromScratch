@@ -109,11 +109,6 @@ class TestePlayer():
         elif self.state == 'ducked':
             self.sprite.set_texture('mario_duck')
 
-        if keys[pygame.K_LEFT]:
-            self.scene.main_camera.scroll_x -= self.vel_x
-        if keys[pygame.K_RIGHT]:
-            self.scene.main_camera.scroll_x += self.vel_x
-
         if self.direction_facing == 'right':
             self.sprite.texture = pygame.transform.flip(
                 self.sprite.texture, True, False)

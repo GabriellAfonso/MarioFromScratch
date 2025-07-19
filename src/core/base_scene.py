@@ -49,7 +49,11 @@ class BaseScene(ABC):
                                  draw_rect, width=1)
             # ver rect dos terrenos
         for terrain in self.terrains:
-            pygame.draw.rect(self.screen, (0, 0, 250), terrain.area, width=1)
+            ter_x = terrain.x - self.main_camera.offset.x
+            ter_y = terrain.y - self.main_camera.offset.y
+            area = terrain.area.copy()
+            setattr(area, terrain.anchor, (ter_x, ter_y))
+            pygame.draw.rect(self.screen, (0, 0, 250), area, width=10)
 
     def add_sound(self, key):
         sound = self.assets.get_sound(key)
