@@ -10,8 +10,8 @@ class TestePlayer():
         self.sprite = scene.add_image('mario_idle', x, y, 'midbottom')
 
         self.vel_x = 5
-        self.vel_y = 5
-        self.gravity = 100
+        self.vel_y = 0
+        self.gravity = False
         self.direction_facing = 'left'
         self.sprite.set_scale(3)
         self.hitbox = Collider(x, y, self.sprite.width,
@@ -20,7 +20,7 @@ class TestePlayer():
         self.sprite.chroma_key(0, 116, 116)
         self.state = 'idle'
         self.move_disable = False
-        print(f'Player created at ({x}, {y}) with sprite {self.sprite}')
+        self.is_on_ground = False
 
     @property
     def x(self):
@@ -47,6 +47,7 @@ class TestePlayer():
 
         try_look_up = keys[pygame.K_w]
         try_duck = keys[pygame.K_s]
+        try_jump = keys[pygame.K_SPACE]
         try_walk = keys[pygame.K_a] or keys[pygame.K_d]
 
         # 🧍‍♂️ Sai do estado de olhar pra cima se soltou W
@@ -79,14 +80,19 @@ class TestePlayer():
         elif try_walk and not self.move_disable:
             self.state = 'walking'
 
+        elif try_jump and not self.move_disable and not self.state == 'air':
+            self.state = 'jumping'
+
         # 💤 Ninguém tá fazendo nada
-        else:
-            self.state = 'idle'
-            self.move_disable = False
+        # else:
+        #     self.state = 'idle'
+        #     self.move_disable = False
 
     def char_states(self):
 
         keys = pygame.key.get_pressed()
+        if self.state == 'air':
+            return
 
         if keys[pygame.K_a]:
             self.direction_facing = 'left'
@@ -109,34 +115,60 @@ class TestePlayer():
         elif self.state == 'ducked':
             self.sprite.set_texture('mario_duck')
 
+        elif self.state == 'jumping':
+            self.state = 'air'
+            if keys[pygame.K_SPACE] and self.is_on_ground:
+
+                self.sprite.set_texture('mario_idle')
+
+                self.vel_y = - 733
+
+        if keys[pygame.K_w]:
+            self.y -= 10
+        if keys[pygame.K_s]:
+            self.y += 10
+
         if self.direction_facing == 'right':
+            print('flipou pra direita')
             self.sprite.texture = pygame.transform.flip(
                 self.sprite.texture, True, False)
         elif self.direction_facing == 'left':
+            print('flipou pra esquerda')
             self.sprite.texture = pygame.transform.flip(
                 self.sprite.texture, False, False)
 
-        if keys[pygame.K_w]:
-            self.y -= self.vel_y
-        if keys[pygame.K_s]:
-            self.y += self.vel_y
-
     def update(self):
+        print(self.state)
+        if not self.is_on_ground:
+            self.vel_y += self.scene.gravity * self.scene.game.delta_time
 
-        # if not self.check_collision(self.scene.square.area):
-        #     # Considera que self.sprite.y representa a base (pés)
-        #     if self.sprite.y < self.scene.square.area.y:
-        #         diff = self.scene.square.area.y - self.sprite.y
-        #         v = min(self.vel_y, diff)
-        #         self.sprite.y += v
-        #         self.hitbox.area.bottom = round(self.sprite.y)
+        self.y += self.vel_y * self.scene.game.delta_time
 
         self.char_command()
         self.char_states()
-        # self.terrain_collisions()
+        self.terrain_collisions()
 
     def terrain_collisions(self):
-        pass
+        self.is_on_ground = False
+        for terrain in self.scene.terrains:
+            if terrain.get_collision_side(self.hitbox):
+                if terrain.is_solid:
+                    side = terrain.get_collision_side(self.hitbox)
+                    terrain.block_overlap(self.hitbox)
+                    self._sync_position_from_hitbox()
+                    if side == 'top':
+                        self.is_on_ground = True
+                        # print('ta no chao')
 
-    def check_collision(self, rect):
-        return self.hitbox.area.colliderect(rect)
+                    # print(side)
+
+    def _sync_position_from_hitbox(self):
+        self.x = self.hitbox.x
+        self.y = self.hitbox.y
+
+    # def is_on_ground(self):
+    #     for terrain in self.scene.terrains:
+    #         print(terrain.get_collision_side(self.hitbox))
+    #         if terrain.get_collision_side(self.hitbox) == 'top':
+    #             return True
+    #     return False
