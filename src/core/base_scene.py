@@ -15,6 +15,7 @@ class BaseScene(ABC):
         self.insertion_index = 0
         self.render_list = []
         self.terrains = []
+        self.entities = []
         self.preload()
         self.create()
 
@@ -54,6 +55,14 @@ class BaseScene(ABC):
             area = terrain.area.copy()
             setattr(area, terrain.anchor, (ter_x, ter_y))
             pygame.draw.rect(self.screen, (0, 0, 250), area, width=10)
+
+        for entity in self.entities:
+            hitbox = entity.hitbox
+            ent_x = hitbox.x - self.main_camera.offset.x
+            ent_y = hitbox.y - self.main_camera.offset.y
+            area = hitbox.area.copy()
+            setattr(area, hitbox.anchor, (ent_x, ent_y))
+            pygame.draw.rect(self.screen, (0, 250, 0), area, width=1)
 
     def add_sound(self, key):
         sound = self.assets.get_sound(key)
