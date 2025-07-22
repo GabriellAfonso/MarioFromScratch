@@ -11,14 +11,16 @@ class TesteScene(BaseScene):
 
     def create(self):
 
-        self.gravity = 1200
-        self.square = Collider(0, 720, 720, 140, 'bottomleft', is_solid=True)
+        self.gravity = 900
+        self.square = Collider(0, 224, 1000, 32, 'bottomleft', is_solid=True)
+        self.square2 = Collider(50, 150, 50, 50, 'bottomleft', is_solid=True)
         self.terrains.append(self.square)
+        self.terrains.append(self.square2)
 
         print('TesteScene created')
-        self.map = self.add_image('yoshis_island2', 0, 720, 'bottomleft')
-        self.map.set_scale(3)
-        self.mario = TestePlayer(30, 40, self)
+        self.map = self.add_image('yoshis_island2', 0, 240, 'bottomleft')
+        # self.map.set_scale(3)
+        self.mario = TestePlayer(0, 0, self)
         self.entities.append(self.mario)
         self.main_camera.add_object(self.square)
 

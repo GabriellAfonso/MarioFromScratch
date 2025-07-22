@@ -54,7 +54,7 @@ class BaseScene(ABC):
             ter_y = terrain.y - self.main_camera.offset.y
             area = terrain.area.copy()
             setattr(area, terrain.anchor, (ter_x, ter_y))
-            pygame.draw.rect(self.screen, (0, 0, 250), area, width=10)
+            pygame.draw.rect(self.screen, (0, 0, 250), area, width=2)
 
         for entity in self.entities:
             hitbox = entity.hitbox
