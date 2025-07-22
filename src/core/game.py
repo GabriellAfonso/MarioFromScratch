@@ -9,7 +9,7 @@ from pygame._sdl2 import Window
 
 
 class Game:
-    def __init__(self, width=1080, height=720, fps=60):
+    def __init__(self, width=256, height=224, fps=60):
         pygame.init()
         pygame.mixer.init()
         pygame.display.set_caption("Mario From Scratch")
