@@ -2,8 +2,8 @@ import pygame
 
 
 class SceneManager:
-    def __init__(self, game):
-        self.game = game
+    def __init__(self, core):
+        self.core = core
         self.scenes = {}  # Registro: key -> classe
         self.active_scenes = []
         self.next_scene = None
@@ -13,13 +13,13 @@ class SceneManager:
 
     def start(self, key):
         # Troca a cena atual por uma nova
-        self.active_scenes = [self.scenes[key](self.game)]
+        self.active_scenes = [self.scenes[key](self.core)]
         if self.next_scene:
-            self.active_scenes = [self.scenes[self.next_scene](self.game)]
+            self.active_scenes = [self.scenes[self.next_scene](self.core)]
 
     def run(self, key):
         # Adiciona nova cena ao topo (como overlay)
-        scene = self.scenes[key](self.game)
+        scene = self.scenes[key](self.core)
         self.active_scenes.append(scene)
 
     def stop(self, key):

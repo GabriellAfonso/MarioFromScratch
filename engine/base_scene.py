@@ -1,17 +1,18 @@
 import pygame
 from abc import ABC, abstractmethod
-from src.core.asset_manager import AssetManager
-from src.components.images import ImageObject
-from src.components.camera import Camera
+from .asset_manager import AssetManager
+from .components.images import ImageObject
+from .components.camera import Camera
 
 
 class BaseScene(ABC):
-    def __init__(self, game):
+    def __init__(self, core):
         self.name = None
-        self.game = game
-        self.main_camera = Camera(self.game.width, self.game.height)
-        self.assets = game.assets
-        self.screen = game.screen
+        self.core = core
+        self.main_camera = Camera(
+            self.core.config.width, self.core.config.height)
+        self.assets = core.assets
+        self.screen = core.screen
         self.insertion_index = 0
         self.render_list = []
         self.terrains = []
