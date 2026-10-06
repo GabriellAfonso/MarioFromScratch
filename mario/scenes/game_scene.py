@@ -1,16 +1,16 @@
 import pygame
-from src.core.base_scene import BaseScene
-from ..core.settings import BASE_DIR
-from src.components.entities.player import Player
+from engine.base_scene import BaseScene
+from engine.settings import BASE_DIR
+from mario.entities.player import Player
 import os
-from src.components.camera import Camera
-from src.components.collider import Collider 
+from engine.components.camera import Camera
+from engine.components.collider import Collider
 
 
 class GameScene(BaseScene):
-    def __init__(self, game):
+    def __init__(self, core):
         self.mario = None
-        super().__init__(game)
+        super().__init__(core)
         self.mario = Player(60, 0, self)
 
     def handle_events(self, event):
@@ -22,11 +22,9 @@ class GameScene(BaseScene):
         self.gravity = 1.1
         self.speed_y = 0
         self.max_speed_y = 10
-        
+
         self.terrain = Collider(0, 640, 1080, 200, 'topleft')
         self.terrains.append(self.terrain)
-
-
 
         self.map = self.add_image('yoshis_island2', 0, -512)
         self.map.set_scale(3)
@@ -36,7 +34,6 @@ class GameScene(BaseScene):
 
     def render(self):
         super().render()
- 
 
     def update(self):
 

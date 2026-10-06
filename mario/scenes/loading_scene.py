@@ -1,13 +1,12 @@
-from src.core.base_scene import BaseScene
-from src.scenes.teste_scene import TesteScene
+from engine.base_scene import BaseScene
 
 
 class LoadingScene(BaseScene):
-    def __init__(self, game):
+    def __init__(self, core):
 
-        self.characters_path = 'assets/sprites/characters/'
-        self.phases_path = 'assets/sprites/phases/'
-        super().__init__(game)
+        self.characters_path = 'mario/assets/sprites/characters/'
+        self.phases_path = 'mario/assets/sprites/phases/'
+        super().__init__(core)
         self.name = 'LoadingScene'
 
     def preload(self):
@@ -23,12 +22,12 @@ class LoadingScene(BaseScene):
         self.assets.load_image('mario_walking',
                                f'{self.characters_path}mario/walk1.png')
         self.assets.load_sound('overworld_theme',
-                               'assets/musics/overworld_theme.ogg')
+                               'mario/assets/musics/overworld_theme.ogg')
 
     def create(self):
         print('LoadingScene created')
-        # self.game.scene_manager.next_scene = 'teste_scene'
-        self.game.scene_manager.run('teste_scene')
+        # self.core.scene_manager.next_scene = 'teste_scene'
+        self.core.scene_manager.run('teste_scene')
         pass
 
     def update(self):

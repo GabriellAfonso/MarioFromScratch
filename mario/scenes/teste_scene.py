@@ -1,17 +1,18 @@
 import pygame
-from src.core.base_scene import BaseScene
-from src.components.entities.teste_player import TestePlayer
-from src.components.collider import Collider
+from engine.base_scene import BaseScene
+from mario.entities.teste_player import TestePlayer
+from engine.components.collider import Collider
+from mario.entities.player import Player
 
 
 class TesteScene(BaseScene):
-    def __init__(self, game):
-        super().__init__(game)
+    def __init__(self, core):
+        super().__init__(core)
         self.name = 'TesteScene'
 
     def create(self):
 
-        self.gravity = 900
+        self.gravity = 500
         self.square = Collider(0, 224, 1000, 32, 'bottomleft', is_solid=True)
         self.square2 = Collider(50, 150, 50, 50, 'bottomleft', is_solid=True)
         self.terrains.append(self.square)
@@ -20,7 +21,7 @@ class TesteScene(BaseScene):
         print('TesteScene created')
         self.map = self.add_image('yoshis_island2', 0, 240, 'bottomleft')
         # self.map.set_scale(3)
-        self.mario = TestePlayer(0, 0, self)
+        self.mario = Player(0, 0, self)
         self.entities.append(self.mario)
         self.main_camera.add_object(self.square)
 

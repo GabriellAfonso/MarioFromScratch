@@ -1,5 +1,5 @@
 import pygame
-from src.components.collider import Collider
+from engine.components.collider import Collider
 from pygame.math import Vector2
 
 
@@ -75,7 +75,7 @@ class TestePlayer():
             self.velocity.y = self.jump_force
 
     def apply_physics(self):
-        dt = self.scene.game.delta_time
+        dt = self.scene.core.delta_time
         acceleration = 600  # px/s²
         deceleration = 800  # px/s²
         max_speed = self.move_speed
@@ -124,7 +124,7 @@ class TestePlayer():
     def move(self):
         self.face_side.get(int(self.direction.x), lambda: None)()
         # print((int(self.direction.x)))
-        dt = self.scene.game.delta_time
+        dt = self.scene.core.delta_time
         # Aplicar movimento
         self.x += self.velocity.x * dt
         # self.resolve_collisions(tiles, axis='x')

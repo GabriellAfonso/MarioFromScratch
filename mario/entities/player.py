@@ -1,5 +1,5 @@
 import pygame
-from src.components.collider import Collider 
+from engine.components.collider import Collider
 
 
 class Player(pygame.sprite.Sprite):
@@ -19,8 +19,9 @@ class Player(pygame.sprite.Sprite):
         self.direction_facing = 'left'
         self.sprite.set_scale(3)
 
-        self.hitbox = Collider(x, y, self.sprite.width, self.sprite.height, anchor='midbottom')
-        
+        self.hitbox = Collider(x, y, self.sprite.width,
+                               self.sprite.height, anchor='midbottom')
+
         self.sprite.chroma_key(0, 116, 116)
         self.state = 'idle'
         self.move_disable = False
@@ -28,11 +29,11 @@ class Player(pygame.sprite.Sprite):
     @property
     def x(self):
         return self._x
-    
+
     @property
     def y(self):
         return self._y
-    
+
     @x.setter
     def x(self, value):
         self._x = value
@@ -52,7 +53,6 @@ class Player(pygame.sprite.Sprite):
         try_duck = keys[pygame.K_s]
         try_walk = keys[pygame.K_a] or keys[pygame.K_d]
 
-       
         if self.state == 'looking_up' and not try_look_up:
             self.move_disable = False
             if try_walk:
@@ -75,7 +75,7 @@ class Player(pygame.sprite.Sprite):
             self.state = 'looking_up'
             self.move_disable = False
 
-        elif  try_walk and not self.move_disable:
+        elif try_walk and not self.move_disable:
             self.state = 'walking'
 
         else:
@@ -104,7 +104,7 @@ class Player(pygame.sprite.Sprite):
                 self.x -= self.acceleration(0.5, 5, 2)
             if keys[pygame.K_d]:
                 self.x += self.acceleration(0.5, 5, 2)
-            
+
         elif self.state == 'ducked':
             self.sprite.set_texture('mario_duck')
 
@@ -114,13 +114,12 @@ class Player(pygame.sprite.Sprite):
         elif self.direction_facing == 'left':
             self.sprite.texture = pygame.transform.flip(
                 self.sprite.texture, False, False)
-        
+
         if keys[pygame.K_w]:
             self.y -= self.vel_y
         if keys[pygame.K_s]:
             self.y += self.vel_y
 
-        
         if keys[pygame.K_LEFT]:
             self.scene.main_camera.scroll_x -= self.vel_x
         if keys[pygame.K_RIGHT]:
@@ -147,21 +146,20 @@ class Player(pygame.sprite.Sprite):
             self.vel = max_sp
         return self.vel
 
+    def update(self):
 
-
-    def update(self): 
-
-        #if not self.check_collision(self.scene.square):
-            # Considera que self.sprite.y representa a base (pés)
-         #   if self.sprite.y < self.scene.square.y:
-          #      diff = self.scene.square.y - self.sprite.y
-           #     v = min(self.vel_y, diff)
-            #    self.sprite.y += v
-             #   self.sprite.rect.bottom = round(self.sprite.y)
+        # if not self.check_collision(self.scene.square):
+        # Considera que self.sprite.y representa a base (pés)
+        #   if self.sprite.y < self.scene.square.y:
+        #      diff = self.scene.square.y - self.sprite.y
+        #     v = min(self.vel_y, diff)
+        #    self.sprite.y += v
+        #   self.sprite.rect.bottom = round(self.sprite.y)
 
         self.char_command()
         self.char_states()
         self.check_terrain_collision()
+
     def draw(self, screen):
         screen.blit(self.sprite.texture,
                     (self.sprite.rect.x, self.sprite.rect.y))
